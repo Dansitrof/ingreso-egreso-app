@@ -8,6 +8,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Store } from '@ngrx/store';
 import { AppState } from '../app.reducer';
 import * as authActions from '../auth/auth.actions';
+import * as ingresoEgresoActions from './../ingreso-egreso/ingreso-egreso.actions';
 
 import { map } from 'rxjs/operators';
 import { Usuario } from '../models/usuario.models';
@@ -20,6 +21,11 @@ import { Subscription } from 'rxjs';
 export class AuthService {
 
   userSubscription: Subscription;
+  private _user: Usuario;
+
+  get user() {
+    return {... this._user };
+  }
 
   constructor( public auth: AngularFireAuth,
                private firestore: AngularFirestore,
@@ -32,13 +38,13 @@ export class AuthService {
 
       // console.log(fUser?.uid);
       if (fUser) {
-        // Esiste
+        // Existe
         this.userSubscription = this.firestore.doc(`${fUser.uid}/usuarios`).valueChanges()
         .subscribe( (firestoreUser: any) =>  {
-          console.log('datosUser', firestoreUser);
+          // console.log('datosUser', firestoreUser);
 
           const user = Usuario.fromFirebase( firestoreUser );
-
+          this._user = user;
           this.store.dispatch( authActions.setUser( {user} ) );
         });
       } else {
@@ -47,9 +53,12 @@ export class AuthService {
         // this.userSubscription.unsubscribe();
         if (this.userSubscription) {
           console.log('se limpia y desubscribe');
+          this._user = null;
           this.userSubscription.unsubscribe();
         }
         this.store.dispatch( authActions.unSetUser() );
+        this.store.dispatch( ingresoEgresoActions.unSetItems() );
+
       }
 
 

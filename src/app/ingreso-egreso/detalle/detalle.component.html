@@ -14,12 +14,21 @@
                 </tr>
               </thead>
 
-              <tbody>
+              <tbody *ngFor="let ingresoEgreso of ingresosEgresos | ordenIngreso">
                 <tr>
-                  <td>Descripción</td>
-                  <td>Monto</td>
-                  <td>Tipo</td>
-                  <td>acciones</td>
+                  <td>{{ ingresoEgreso.descripcion }}</td>
+                  <td>{{ ingresoEgreso.monto | currency }}</td>
+                  <td [class.text-success]="ingresoEgreso.tipo === 'ingreso'"
+                      [class.text-danger]="ingresoEgreso.tipo !== 'ingreso'">
+                    {{ ingresoEgreso.tipo }}
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-danger"
+                      (click)="borrar( ingresoEgreso.uid )">
+                      <i class="fa fa-trash"></i>
+                      Borrar
+                    </button>
+                  </td>
                 </tr>
               </tbody>
 

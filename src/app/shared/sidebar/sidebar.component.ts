@@ -1,7 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+
+// NGRX
+import { AppState } from '../../app.reducer';
+import { Store } from '@ngrx/store';
+
+import { Usuario } from '../../models/usuario.models';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-sidebar',
@@ -9,12 +17,30 @@ import Swal from 'sweetalert2';
   styles: [
   ]
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
 
-  constructor( private authservice: AuthService,
+  usuario: Usuario;
+  userSubs: Subscription;
+
+  constructor( private store: Store<AppState>,
+               private authservice: AuthService,
                private router: Router ) { }
 
   ngOnInit(): void {
+
+  this.userSubs = this.store.select('user')
+  .pipe(
+    filter( ({user}) => user != null && user.nombre != null)
+  )
+  .subscribe( ({ user }) => this.usuario = user);
+
+  }
+
+
+  ngOnDestroy(): void {
+
+    this.userSubs.unsubscribe();
+
   }
 
   cerrarSesion() {
@@ -34,5 +60,6 @@ export class SidebarComponent implements OnInit {
      });
 
   }
+  
 
 }
