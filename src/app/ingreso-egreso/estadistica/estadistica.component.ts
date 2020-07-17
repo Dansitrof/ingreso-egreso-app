@@ -2,7 +2,7 @@ import { ingresoEgreso } from './../../models/ingreso-egreso.models';
 import { Component, OnInit } from '@angular/core';
 
 import { Store } from '@ngrx/store';
-import { AppState } from '../../app.reducer';
+import { AppStateWithIngresoEgreso } from '../ingreso-egreso.reducer';
 
 // ng2-charts
 import { ChartType } from 'chart.js';
@@ -27,7 +27,7 @@ export class EstadisticaComponent implements OnInit {
   public doughnutChartData: MultiDataSet = [[]];
   public doughnutChartType: ChartType = 'doughnut';
 
-  constructor( private store: Store<AppState>) { }
+  constructor( private store: Store<AppStateWithIngresoEgreso>) { }
 
   ngOnInit(): void {
 
